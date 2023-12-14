@@ -6,7 +6,7 @@
 
 # Prerequisites: $DOCKERHUB_USERNAME, $DOCKERHUB_PASSWORD setup as deployment variables
 
-#image: atlassian/default-image:3
+image: atlassian/default-image:3
 
 pipelines:
   default:
