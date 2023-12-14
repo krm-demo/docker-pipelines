@@ -11,7 +11,7 @@ image: atlassian/default-image:3
 pipelines:
   default:
     - step:
-        deployment: something
+        deployment: Test
         script:
           - docker version
         services:
