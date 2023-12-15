@@ -14,6 +14,7 @@ pipelines:
         deployment: Test
         script:
           - docker version
+          - env | sort > ./env.txt
           - chmod +x ./hello.sh
           - echo "executing before bulding the docker-image:" && ./hello.sh
           - docker build . --tag krmdemo/thymeleaf-base:1.0
