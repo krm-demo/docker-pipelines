@@ -14,6 +14,7 @@ pipelines:
         deployment: Test
         script:
           - docker version
+          - echo "executing before bulding the docker-image:" && ./hello.sh
           - docker build .
           - docker images
         services:
