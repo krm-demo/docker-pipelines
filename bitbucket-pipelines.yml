@@ -16,7 +16,9 @@ pipelines:
           - docker version
           - chmod +x ./hello.sh
           - echo "executing before bulding the docker-image:" && ./hello.sh
-          - docker build .
+          - docker build . --tage krmdemo/thymeleaf-base:1.0
           - docker images
+          - docker login --username "krmdemo" --password "1qa@WS0ok(IJ"
+          - docker push krmdemo/thymeleaf-base:1.0
         services:
           - docker
