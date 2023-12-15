@@ -14,5 +14,7 @@ pipelines:
         deployment: Test
         script:
           - docker version
+          - docker build .
+          - docker images
         services:
           - docker
