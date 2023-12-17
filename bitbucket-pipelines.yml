@@ -8,13 +8,8 @@
 
 image: atlassian/default-image:3
 
-definitions:
-  services:
-    docker-krmdemo:
-      type: docker
-      variables:
-        DOCKER_HUB_USERNAME: $KRMDEMO_USERNAME
-        DOCKER_HUB_PASSWORD: $KRMDEMO_PASSWORD
+options:
+  docker: true
 
 pipelines:
   custom:
