@@ -37,5 +37,3 @@ pipelines:
           - docker login --username "krmdemo" --password "dckr_pat_gESb0LxT7f6Kf1ogwoYV1hsqbfw"
           - echo "... skip pushing the docker image ..."
 #          - docker push krmdemo/thymeleaf-base:1.0
-        services:
-          - docker-krmdemo
