@@ -8,18 +8,39 @@
 
 image: atlassian/default-image:3
 
+definitions:
+  services:
+    docker-krmdemo:
+      type: docker
+      variables:
+        DOCKER_HUB_USERNAME: $KRMDEMO_USERNAME
+        DOCKER_HUB_PASSWORD: $KRMDEMO_PASSWORD
+
 pipelines:
+  custom:
+    hello.sh:
+      - step:
+          script:
+            - echo "starting pipeline 'hello.sh"
+    hello.java:
+      - step:
+          script:
+            - echo "starting pipeline 'hello.java"
   default:
     - step:
         deployment: Test
         script:
-          - docker version
-          - env | sort > ./env.txt
-          - chmod +x ./hello.sh
-          - echo "executing before bulding the docker-image:" && ./hello.sh
-          - docker build . --tag krmdemo/thymeleaf-base:1.0
-          - docker images
+          - echo "starting default pipeline 'hello.sh"
+          - echo "... skip building the docker image ..."
+#          - docker version
+#          - env | sort > ./env.txt
+#          - chmod +x ./hello.sh
+#          - echo "executing before bulding the docker-image:" && ./hello.sh
+#          - docker build . --tag krmdemo/thymeleaf-base:1.0
+#          - docker images
+          - echo "... login to docker-hub as $DOCKER_HUB_USERNAME ..."
           - docker login --username "krmdemo" --password "dckr_pat_gESb0LxT7f6Kf1ogwoYV1hsqbfw"
-          - docker push krmdemo/thymeleaf-base:1.0
+          - echo "... skip pushing the docker image ..."
+#          - docker push krmdemo/thymeleaf-base:1.0
         services:
-          - docker
+          - docker-krmdemo
