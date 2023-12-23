@@ -14,7 +14,7 @@ pipelines:
     hello-sh:
       - step:
           deployment: hello-sh
-          name: build and push 'hello-sh'
+          name: build and  push 'hello-sh'
           image: atlassian/default-image:3
           script:
             - ./build-image.sh
