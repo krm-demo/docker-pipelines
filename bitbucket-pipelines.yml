@@ -14,9 +14,11 @@ pipelines:
     hello-sh:
       - step:
           deployment: hello-sh
-          name: build and  push 'hello-sh'
+          name: build and push '$DEPLOYMENT_NAME'
           image: atlassian/default-image:3
           script:
+            - echo $DOCKER_USERNAME
+            - echo $DOCKER_PASSWORD
             - ./build-image.sh
     hello-java:
       - step:
