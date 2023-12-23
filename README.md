@@ -1,6 +1,7 @@
-# README #
+# docker-pipelines #
 
-This README would normally document whatever steps are necessary to get your application up and running.
+This repository demonstrates the simplest command-line applications,
+which can be containerized and published with [docker tool](https://docs.docker.com/). 
 
 ### What is this repository for? ###
 

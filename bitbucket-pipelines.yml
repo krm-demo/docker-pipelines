@@ -6,34 +6,22 @@
 
 # Prerequisites: $DOCKERHUB_USERNAME, $DOCKERHUB_PASSWORD setup as deployment variables
 
-image: atlassian/default-image:3
-
 options:
   docker: true
 
 pipelines:
   custom:
-    hello.sh:
+    hello-sh:
       - step:
+          deployment: hello-sh
+          name: build and push 'hello-sh'
+          image: atlassian/default-image:3
           script:
-            - echo "starting pipeline 'hello.sh"
-    hello.java:
+            - ./build-image.sh
+    hello-java:
       - step:
+          deployment: hello-java
+          name: build and push 'hello-java'
+          image: atlassian/default-image:3
           script:
-            - echo "starting pipeline 'hello.java"
-  default:
-    - step:
-        deployment: Test
-        script:
-          - echo "starting default pipeline 'hello.sh"
-          - echo "... skip building the docker image ..."
-#          - docker version
-#          - env | sort > ./env.txt
-#          - chmod +x ./hello.sh
-#          - echo "executing before bulding the docker-image:" && ./hello.sh
-#          - docker build . --tag krmdemo/thymeleaf-base:1.0
-#          - docker images
-          - echo "... login to docker-hub as $DOCKER_HUB_USERNAME ..."
-          - docker login --username "krmdemo" --password "dckr_pat_gESb0LxT7f6Kf1ogwoYV1hsqbfw"
-          - echo "... skip pushing the docker image ..."
-#          - docker push krmdemo/thymeleaf-base:1.0
+            - ./build-image.sh
