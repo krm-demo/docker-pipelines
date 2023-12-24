@@ -1,6 +1,10 @@
 #!/bin/sh
+# ------------------------------------------------------------------------------------
+#     Build-Script for docker-image according to deployment $DEPLOYMENT_NAME
+# ------------------------------------------------------------------------------------
 
 export DOCKER_IMAGE_BUILT_AT=$(date --utc "+%FT%T.%6NZ")
+export DOCKER_IMAGE_BUILT_AT_FMT=$(date -R)
 export DOCKER_IMAGE_BASE_DIR=$(dirname $0)
 
 export PRE_BUILD_SCRIPT="$DOCKER_IMAGE_BASE_DIR/pre-build-${DEPLOYMENT_NAME:="<<unknown-deployment>>"}.sh"

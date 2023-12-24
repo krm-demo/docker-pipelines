@@ -1,10 +1,5 @@
-# Template docker-push
-
-# This template allows you to build and push your docker image to a Docker Hub account.
-# The workflow allows running tests, code linting and security scans on feature branches (as well as master).
-# The docker image will be validated and pushed to the docker registry after the code is merged to master.
-
-# Prerequisites: $DOCKERHUB_USERNAME, $DOCKERHUB_PASSWORD setup as deployment variables
+# Definitions of Bit-Bucket pipelines to build and push docker-images
+# Prerequisites: $DOCKER_USERNAME, $DOCKER_PASSWORD setup as Bit-Bucket repository-variables
 
 options:
   docker: true
@@ -12,18 +7,19 @@ options:
 pipelines:
   custom:
     hello-sh:
-      - step:
+      - step: &build-step--hello-sh
           deployment: hello-sh
           name: build and push 'hello-sh'
           image: atlassian/default-image:4
           script:
-            - echo $DOCKER_USERNAME
-            - echo $DOCKER_PASSWORD
             - ./build-image.sh
     hello-java:
-      - step:
+      - step: &build-step--hello-java
           deployment: hello-java
           name: build and push 'hello-java'
           image: eclipse-temurin:21-jdk
           script:
             - ./build-image.sh
+  default:
+    - step: *build-step--hello-sh
+    - step: *build-step--hello-java
