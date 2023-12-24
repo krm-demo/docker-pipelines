@@ -1,11 +1,3 @@
 FROM busybox
-
-COPY ./env.txt .
-COPY ./hello.sh .
-
-CMD echo ./hello.sh \
- && echo "-----------------" \
- && echo "runtime-environment on start-up:" && env | sort \
- && echo "-----------------" \
- && echo "build-environment when building the docker image:" && cat ./env.txt \
- && echo "-----------------"
+COPY ./env.txt ./hello.sh ./
+CMD ./hello.sh
