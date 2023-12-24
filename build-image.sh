@@ -56,7 +56,7 @@ echo "executing the pre-build script '$PRE_BUILD_SCRIPT':"
 $PRE_BUILD_SCRIPT
 
 # building the docker-image
-docker build . -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE
+docker build . -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform linux/arm64/v8,linux/amd64
 if [ $? -ne 0 ]; then
   echo "cannot build the docker-image '$DOCKER_IMAGE' with docker-file '$DOCKERFILE_NAME'"
   exit -3
