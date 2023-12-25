@@ -25,6 +25,7 @@ dist/
 
 # JetBrains IDE
 .idea/
+out/
 *.iml
 
 # Unit test reports
@@ -48,3 +49,6 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
+
+# Generated environment files
+env*.txt

@@ -3,6 +3,9 @@
 #     Build-Script for docker-image according to deployment $DEPLOYMENT_NAME
 # ------------------------------------------------------------------------------------
 
+echo "docker-platform = '$(docker system info --format '{{.OSType}}/{{.Architecture}}')'"
+
+export UNAME_ALL=$(uname -a)
 export DOCKER_IMAGE_BUILT_AT=$(date --utc "+%FT%T.%6NZ")
 export DOCKER_IMAGE_BUILT_AT_FMT=$(date -R)
 export DOCKER_IMAGE_BASE_DIR=$(dirname $0)
@@ -10,7 +13,7 @@ export DOCKER_IMAGE_BASE_DIR=$(dirname $0)
 export PRE_BUILD_SCRIPT="$DOCKER_IMAGE_BASE_DIR/pre-build-${DEPLOYMENT_NAME:="<<unknown-deployment>>"}.sh"
 if [ ! -f "$PRE_BUILD_SCRIPT" ]; then
   echo "pre-build script does not exists - '$PRE_BUILD_SCRIPT'"
-  exit -1
+  exit 101
 fi
 
 export DOCKERFILE_NAME="Dockerfile-$DEPLOYMENT_NAME"
@@ -26,7 +29,7 @@ if [ -n "$DOCKER_PASSWORD" ]; then
   echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
   if [ $? -ne 0 ]; then
     echo "cannot login to docker-registry"
-    exit -2
+    exit 102
   fi
   export DOCKER_REPO_NAME=$DOCKER_USERNAME
 else
@@ -50,26 +53,50 @@ echo "DOCKER_REPO_NAME  = '$DOCKER_REPO_NAME'"
 echo "DOCKER_IMAGE_NAME = '$DOCKER_IMAGE_NAME'"
 echo "DOCKER_TAG_NAME   = '$DOCKER_TAG_NAME'"
 echo "DOCKER_IMAGE      = '$DOCKER_IMAGE'"
+echo '$(uname -a) = "'$UNAME_ALL'"'
 
 # executing the pre-build script (compilation, preparing resources and packaging)
 echo "executing the pre-build script '$PRE_BUILD_SCRIPT':"
 $PRE_BUILD_SCRIPT
 
 # building the docker-image
-docker buildx build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform linux/arm64/v8,linux/amd64 .
-if [ $? -ne 0 ]; then
-  echo "cannot build the docker-image '$DOCKER_IMAGE' with docker-file '$DOCKERFILE_NAME'"
-  exit -3
-fi
-
-if [ -n "$DOCKER_PASSWORD" ]; then
-  echo "push the docker-image '$DOCKER_IMAGE' to docker-registry ..."
-  docker push $DOCKER_IMAGE
+manifests_to_push=""
+for arch in arm64 amd64; do
+  docker build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE.$arch --platform linux/$arch .
   if [ $? -ne 0 ]; then
-    echo "cannot push the docker-image '$DOCKER_IMAGE' to docker-registry"
-    exit -4
+    echo "cannot build the docker-image '$DOCKER_IMAGE.$arch' with docker-file '$DOCKERFILE_NAME'"
+    continue
   fi
-  echo "docker-image '$DOCKER_IMAGE' was pushed successfully"
+  manifests_to_push=${manifests_to_push:+"$manifests_to_push "}$DOCKER_IMAGE.$arch
+  if [ -n "$DOCKER_PASSWORD" ]; then
+    echo "push the docker-image '$DOCKER_IMAGE.$arch' to docker-registry ..."
+    docker push $DOCKER_IMAGE.$arch
+    if [ $? -ne 0 ]; then
+      echo "cannot push the docker-image '$DOCKER_IMAGE.$arch' to docker-registry"
+      continue
+    fi
+    echo "docker-image '$DOCKER_IMAGE.$arch' was pushed successfully"
+  fi
+done
+echo "manifests_to_push = '$manifests_to_push'"
+
+if [ -z "$DOCKER_PASSWORD" ]; then
+  echo "skip pushing the docker-manifest into docker-registry"
+elif [ -z "$manifests_to_push" ]; then
+  echo "nothing to push into docker-registry (manifest list is empty)"
+  exit 104
 else
-  echo "skip pushing the docker-image into docker-registry"
+  echo "create and push the docker-manifest '$DOCKER_IMAGE' for '$manifests_to_push' to docker-registry ..."
+  docker manifest create $DOCKER_IMAGE $manifests_to_push
+  if [ $? -ne 0 ]; then
+    echo "cannot create the docker-manifest"
+    exit 105
+  fi
+  docker manifest push $DOCKER_IMAGE
+  if [ $? -ne 0 ]; then
+    echo "cannot push the docker-manifest"
+    exit 106
+  fi
+  echo "docker-manifest '$DOCKER_IMAGE' was pushed successfully:"
+  docker manifest inspect --verbose $DOCKER_IMAGE
 fi

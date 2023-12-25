@@ -1,7 +1,10 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 
 /**
@@ -22,8 +25,24 @@ public class Hello {
             e -> "" + e.getKey(), e -> "" + e.getValue(), (x, y) -> y, TreeMap::new));
     }
 
-    private static void  dumpProps(Map<String, String> props) {
+    private static void dumpProps(Map<String, String> props) {
         props.forEach((propName, propValue) -> System.out.printf("%s --> '%s'\n", propName, propValue));
+    }
+
+    private static void dumpCmd(String... cmd) {
+        String commandLine = stream(cmd).collect(joining(" ", "$(", ")"));
+        try {
+            Process pr = new ProcessBuilder(cmd).redirectErrorStream(true).start();
+            BufferedReader br = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+            System.out.printf("%s = '%s'", commandLine, br.lines().collect(joining(" :\\n: ")));
+            br.close();
+            int exitCode = pr.waitFor();
+            System.out.println(exitCode == 0 ? "" : " exitCode " + exitCode);
+        } catch (Exception ex) {
+            System.err.printf("could not execute the command-line: %s\n", commandLine);
+            ex.printStackTrace(System.err);
+            System.exit(-222);
+        }
     }
 
     /**
@@ -36,6 +55,14 @@ public class Hello {
 
         System.out.println("runtime-environment on start-up:");
         System.out.println("-------------------------------------------------");
+        dumpCmd("uname", "-s"); // --kernel-name
+        dumpCmd("uname", "-r"); // --kernel-release
+        dumpCmd("uname", "-o"); // --operating-system
+        dumpCmd("uname", "-m"); // --machine
+        dumpCmd("uname", "-p"); // --processor
+        dumpCmd("uname", "-n"); // --nodename
+        dumpCmd("uname", "-i"); // --hardware-platform
+        dumpCmd("uname", "-a"); // --all
         dumpProps(new TreeMap<>(System.getenv()));
         System.out.println("=================================================");
 
