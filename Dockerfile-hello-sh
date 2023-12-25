@@ -1,9 +1,14 @@
-FROM busybox
+FROM --platform=${TARGETPLATFORM} busybox
 
-#ARG TARGETPLATFORM
-#ARG TARGETARCH
-#ARG TARGETVARIANT
+ARG TARGETPLATFORM
+ARG TARGETARCH
+ARG TARGETVARIANT
 #RUN echo "TARGETPLATFORM(${TARGETPLATFORM}) TARGETARCH(${TARGETARCH}) TARGETVARIANT(${TARGETVARIANT})"
+RUN printf '..%s..' "I'm building for TARGETPLATFORM=${TARGETPLATFORM}" \
+    && printf '..%s..' ", TARGETARCH=${TARGETARCH}" \
+    && printf '..%s..' ", TARGETVARIANT=${TARGETVARIANT} \n" \
+    && printf '..%s..' "With uname -s : " && uname -s \
+    && printf '..%s..' "and  uname -m : " && uname -m
 
 COPY ./env.txt ./hello.sh ./
 CMD ./hello.sh
