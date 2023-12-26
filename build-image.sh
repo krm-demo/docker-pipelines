@@ -61,7 +61,7 @@ $PRE_BUILD_SCRIPT
 
 # building the docker-image
 manifests_to_push=""
-for arch in amd64 arm64; do
+for arch in arm64 amd64; do
   echo "build the docker-image '$DOCKER_IMAGE-$arch' ..."
   docker build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE-$arch --platform linux/$arch .
   if [ $? -ne 0 ]; then
