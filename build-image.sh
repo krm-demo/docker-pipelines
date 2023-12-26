@@ -61,22 +61,22 @@ $PRE_BUILD_SCRIPT
 
 # building the docker-image
 manifests_to_push=""
-for arch in arm64 amd64; do
-  echo "build the docker-image '$DOCKER_IMAGE.$arch' ..."
-  docker build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE.$arch --platform linux/$arch .
+for arch in amd64 arm64; do
+  echo "build the docker-image '$DOCKER_IMAGE-$arch' ..."
+  docker build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE-$arch --platform linux/$arch .
   if [ $? -ne 0 ]; then
-    echo "cannot build the docker-image '$DOCKER_IMAGE.$arch' with docker-file '$DOCKERFILE_NAME'"
+    echo "cannot build the docker-image '$DOCKER_IMAGE-$arch' with docker-file '$DOCKERFILE_NAME'"
     continue
   fi
-  manifests_to_push=${manifests_to_push:+"$manifests_to_push "}$DOCKER_IMAGE.$arch
+  manifests_to_push=${manifests_to_push:+"$manifests_to_push "}$DOCKER_IMAGE-$arch
   if [ -n "$DOCKER_PASSWORD" ]; then
-    echo "push the docker-image '$DOCKER_IMAGE.$arch' to docker-registry ..."
-    docker push $DOCKER_IMAGE.$arch
+    echo "push the docker-image '$DOCKER_IMAGE-$arch' to docker-registry ..."
+    docker push $DOCKER_IMAGE-$arch
     if [ $? -ne 0 ]; then
-      echo "cannot push the docker-image '$DOCKER_IMAGE.$arch' to docker-registry"
+      echo "cannot push the docker-image '$DOCKER_IMAGE-$arch' to docker-registry"
       continue
     fi
-    echo "docker-image '$DOCKER_IMAGE.$arch' was pushed successfully"
+    echo "docker-image '$DOCKER_IMAGE-$arch' was pushed successfully"
   fi
 done
 echo "manifests_to_push = '$manifests_to_push'"
