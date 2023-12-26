@@ -21,7 +21,6 @@ dist/
 
 # Maven
 target/
-dist/
 
 # JetBrains IDE
 .idea/
@@ -52,4 +51,5 @@ Thumbs.db
 
 # Generated environment files
 env*.txt
+env-docker-system-info.*
 env-manifest-*.json

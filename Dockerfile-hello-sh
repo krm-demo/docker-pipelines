@@ -10,5 +10,5 @@ FROM busybox
 #    && printf '..%s..' "With uname -s : " && uname -s \
 #    && printf '..%s..' "and  uname -m : " && uname -m
 
-COPY ./env.txt ./hello.sh ./
+COPY ./env.txt ./env-docker-system-info.json ./hello.sh ./
 CMD ./hello.sh

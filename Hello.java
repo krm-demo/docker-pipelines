@@ -1,5 +1,4 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -13,10 +12,16 @@ import static java.util.stream.Collectors.*;
 public class Hello {
 
     private final static String RESOURCE_BUILD_ENV = "/env__esc_bs.txt";
+    private final static String RESOURCE_BUILD_DOCKER_INFO = "/env-docker-system-info.txt";
 
-    private static SortedMap<String, String> loadProps(URL resURL) throws Exception {
+    private static SortedMap<String, String> loadProps(URL resURL) {
         Properties props = new Properties();
-        props.load(resURL.openStream());
+        try (InputStream res = resURL.openStream()) {
+            props.load(res);
+        } catch (Exception ex) {
+            System.err.printf("could not load properties from resource: %s\n", resURL);
+            ex.printStackTrace(System.err);
+        }
         return toSortedMap(props);
     }
 
@@ -41,7 +46,16 @@ public class Hello {
         } catch (Exception ex) {
             System.err.printf("could not execute the command-line: %s\n", commandLine);
             ex.printStackTrace(System.err);
-            System.exit(-222);
+            System.exit(-111);
+        }
+    }
+
+    private static void dumpResource(URL resURL) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(resURL.openStream()))) {
+            br.lines().forEach(System.out::println);
+        } catch (Exception ex) {
+            System.err.printf("could not dump the content of resource: %s\n", resURL);
+            ex.printStackTrace(System.err);
         }
     }
 
@@ -49,7 +63,7 @@ public class Hello {
      * JVM entry-point.
      * @param args command-line arguments
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         System.out.printf("Hello from '%s.java' at %s\n", Hello.class.getName(), ZonedDateTime.now());
         System.out.println("=================================================");
 
@@ -75,12 +89,22 @@ public class Hello {
         System.out.printf("build-environment when building the docker image '%s':\n", RESOURCE_BUILD_ENV);
         if (buildEnvURL == null) {
             System.err.printf("could not load the content of resource '%s'\n", RESOURCE_BUILD_ENV);
-            System.exit(-111);
+            System.exit(-222);
         }
         System.out.printf("content of resource (%s):\n", buildEnvURL);
         System.out.println("-------------------------------------------------");
         dumpProps(loadProps(buildEnvURL));
+        System.out.println("=================================================");
 
+        URL dockerInfoURL = Hello.class.getResource(RESOURCE_BUILD_DOCKER_INFO);
+        System.out.printf("docker system-info when building the docker image '%s':\n", RESOURCE_BUILD_DOCKER_INFO);
+        if (dockerInfoURL == null) {
+            System.err.printf("could not load the content of resource '%s'\n", RESOURCE_BUILD_DOCKER_INFO);
+            System.exit(-333);
+        }
+        System.out.printf("content of resource (%s):\n", dockerInfoURL);
+        System.out.println("-------------------------------------------------");
+        dumpResource(dockerInfoURL);
         System.out.println("=================================================");
     }
 }
