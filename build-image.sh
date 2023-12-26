@@ -5,7 +5,7 @@
 
 # it's very important to declare this variable - otherwise, it would be impossible
 # to build the docker-images for different platforms (like 'linux/amd64', 'linux/arm64', ...)
-#export DOCKER_BUILDKIT=1
+export DOCKER_BUILDKIT=1
 
 echo "docker-platform = '$(docker system info --format '{{.OSType}}/{{.Architecture}}')'"
 
