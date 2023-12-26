@@ -3,5 +3,5 @@
 #   Pre-Build script for deployment-type 'hello-java', invoked from 'build-image.sh'
 # ------------------------------------------------------------------------------------
 env | sort | sed 's/\\/\\\\/g' > ./env__esc_bs.txt   # <-- double back-slash to read with java.util.Properties
-docker system info > env-docker-system-info.txt
+docker system info > ./env-docker-system-info.txt
 javac --source-path "${DOCKER_IMAGE_BASE_DIR:-$(dirname $0)}" Hello.java
