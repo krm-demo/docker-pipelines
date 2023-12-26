@@ -21,5 +21,7 @@ pipelines:
           script:
             - ./build-image.sh
   default:
-    - step: *build-step--hello-sh
-    - step: *build-step--hello-java
+    - parallel:
+        steps:
+          - step: *build-step--hello-sh
+          - step: *build-step--hello-java
