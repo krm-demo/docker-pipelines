@@ -25,6 +25,8 @@ pipelines:
           deployment: hello-maven
           name: build and push 'hello-maven'
           image: maven:3.9.6-eclipse-temurin-21
+          caches:
+            - maven
           script:
             - ./build-image.sh
   default:
