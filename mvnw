@@ -38,6 +38,9 @@ export MAVEN_OPTS=" -XX:+EnableDynamicAgentLoading -Xshare:off -XX:-PrintWarning
 export MAVEN_WRAPPER_STARTED_AT=$(date --utc "+%FT%T.%NZ")
 export MAVEN_WRAPPER_SCRIPT_FILE=$(realpath "$0")
 echo "Starting maven as a wrapper from '$MAVEN_WRAPPER_SCRIPT_FILE'"
+# variable $MAVEN_CONFIG should be empty - otherwise there will be an error (Unknown lifecycle phase "/root/.m2")
+# when executing this script from Bit-Bucket pipeline (with build-image "maven:3.9.6-eclipse-temurin-21")
+export MAVEN_CONFIG=
 # -------------------------------------------
 
 if [ -z "$MAVEN_SKIP_RC" ] ; then
