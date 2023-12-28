@@ -20,8 +20,16 @@ pipelines:
           image: eclipse-temurin:21-jdk
           script:
             - ./build-image.sh
+    hello-maven:
+      - step: &build-step--hello-maven
+          deployment: hello-maven
+          name: build and push 'hello-maven'
+          image: maven:3.9.6-eclipse-temurin-21
+          script:
+            - ./build-image.sh
   default:
     - parallel:
         steps:
           - step: *build-step--hello-sh
           - step: *build-step--hello-java
+          - step: *build-step--hello-maven

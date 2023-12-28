@@ -62,6 +62,10 @@ echo '$(uname -a) = "'$UNAME_ALL'"'
 # executing the pre-build script (compilation, preparing resources and packaging)
 echo "executing the pre-build script '$PRE_BUILD_SCRIPT':"
 $PRE_BUILD_SCRIPT
+if [ $? -ne 0 ]; then
+  echo "cannot pre-build the deployment with '$PRE_BUILD_SCRIPT'"
+  exit 103
+fi
 
 # building the docker-image
 manifests_to_push=""
