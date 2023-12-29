@@ -75,45 +75,22 @@ if [ $? -ne 0 ]; then
   exit 103
 fi
 
-## building the docker-image
-#manifests_to_push=""
-#for arch in arm64 amd64; do
-#  echo "build the docker-image '$DOCKER_IMAGE.$arch' ..."
-#  docker build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE.$arch --platform linux/$arch .
-#  if [ $? -ne 0 ]; then
-#    echo "cannot build the docker-image '$DOCKER_IMAGE.$arch' with docker-file '$DOCKERFILE_NAME'"
-#    continue
-#  fi
-#  manifests_to_push=${manifests_to_push:+"$manifests_to_push "}$DOCKER_IMAGE.$arch
-#  if [ -n "$DOCKER_PASSWORD" ]; then
-#    echo "push the docker-image '$DOCKER_IMAGE.$arch' to docker-registry ..."
-#    docker push $DOCKER_IMAGE.$arch
-#    if [ $? -ne 0 ]; then
-#      echo "cannot push the docker-image '$DOCKER_IMAGE.$arch' to docker-registry"
-#      continue
-#    fi
-#    echo "docker-image '$DOCKER_IMAGE.$arch' was pushed successfully"
-#  fi
-#done
-#echo "manifests_to_push = '$manifests_to_push'"
-#
-#if [ -z "$DOCKER_PASSWORD" ]; then
-#  echo "skip pushing the docker-manifest into docker-registry"
-#elif [ -z "$manifests_to_push" ]; then
-#  echo "nothing to push into docker-registry (manifest list is empty)"
-#  exit 104
-#else
-#  echo "create and push the docker-manifest '$DOCKER_IMAGE' for '$manifests_to_push' to docker-registry ..."
-#  docker manifest create $DOCKER_IMAGE $manifests_to_push
-#  if [ $? -ne 0 ]; then
-#    echo "cannot create the docker-manifest"
-#    exit 105
-#  fi
-#  docker manifest push $DOCKER_IMAGE
-#  if [ $? -ne 0 ]; then
-#    echo "cannot push the docker-manifest"
-#    exit 106
-#  fi
-#  echo "docker-manifest '$DOCKER_IMAGE' was pushed successfully:"
-#  docker manifest inspect --verbose $DOCKER_IMAGE
-#fi
+echo "build the multi-platform docker-image '$DOCKER_IMAGE' ..."
+docker buildx build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform=linux/arm64,linux/amd64 .
+if [ $? -ne 0 ]; then
+  echo "cannot build the docker-image '$DOCKER_IMAGE' with docker-file '$DOCKERFILE_NAME'"
+  exit 105
+fi
+
+if [ -z "$DOCKER_PASSWORD" ]; then
+  echo "skip pushing the multi-platform docker-image into docker-registry"
+else
+  echo "push the multi-platform docker-image '$DOCKER_IMAGE' to docker-registry ..."
+  docker push $DOCKER_IMAGE
+  if [ $? -ne 0 ]; then
+    echo "cannot push the multi-platform docker-image '$DOCKER_IMAGE'"
+    exit 106
+  fi
+  echo "multi-platform docker-image '$DOCKER_IMAGE' was pushed successfully:"
+  docker inspect --verbose $DOCKER_IMAGE
+fi
