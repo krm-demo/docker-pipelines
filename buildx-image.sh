@@ -23,23 +23,16 @@ fi
 
 export DOCKERFILE_NAME="Dockerfile-$DEPLOYMENT_NAME"
 export DOCKER_IMAGE_NAME="dpp-$DEPLOYMENT_NAME"
-#export DOCKER_USERNAME=${DOCKER_USERNAME:="<<unknown-docker-username>>"}
-#export DOCKER_PASSWORD=${DOCKER_PASSWORD:="<<unknown-docker-password>>"}
 
-export DOCKER_REPO_NAME=
-if [ -n "$DOCKER_PASSWORD" ]; then
-  echo "login to docker-registry ..."
-  echo "DOCKER_USERNAME = '$DOCKER_USERNAME'"
-  echo "DOCKER_PASSWORD has length " ${#DOCKER_PASSWORD}
-  echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
-  if [ $? -ne 0 ]; then
-    echo "cannot login to docker-registry"
-    exit 102
-  fi
-  export DOCKER_REPO_NAME=$DOCKER_USERNAME
-else
-  echo "skip login to docker-registry"
+echo "login to docker-registry ..."
+echo "DOCKER_USERNAME = '$DOCKER_USERNAME'"
+echo "DOCKER_PASSWORD has length " ${#DOCKER_PASSWORD}
+echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+if [ $? -ne 0 ]; then
+  echo "cannot login to docker-registry: using 'docker buildx' is impossible"
+  exit 102
 fi
+export DOCKER_REPO_NAME=$DOCKER_USERNAME
 
 export DOCKER_TAG_NAME=
 # - checking if the build-environment is Bit-Bucket:
@@ -75,22 +68,17 @@ if [ $? -ne 0 ]; then
   exit 103
 fi
 
-echo "build the multi-platform docker-image '$DOCKER_IMAGE' ..."
-docker buildx build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform=linux/arm64,linux/amd64 .
+echo "build and push the multi-platform docker-image '$DOCKER_IMAGE' ..."
+docker buildx build -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform=linux/arm64,linux/amd64 --push .
 if [ $? -ne 0 ]; then
   echo "cannot build the docker-image '$DOCKER_IMAGE' with docker-file '$DOCKERFILE_NAME'"
   exit 105
 fi
 
-if [ -z "$DOCKER_PASSWORD" ]; then
-  echo "skip pushing the multi-platform docker-image into docker-registry"
-else
-  echo "push the multi-platform docker-image '$DOCKER_IMAGE' to docker-registry ..."
-  docker push $DOCKER_IMAGE
-  if [ $? -ne 0 ]; then
-    echo "cannot push the multi-platform docker-image '$DOCKER_IMAGE'"
-    exit 106
-  fi
-  echo "multi-platform docker-image '$DOCKER_IMAGE' was pushed successfully:"
-  docker inspect --verbose $DOCKER_IMAGE
+echo "inspect the docker-image '$DOCKER_IMAGE' ..."
+docker manifest inspect $DOCKER_IMAGE
+
+if [ "$DOCKER_TAG_NAME" == "local" ]; then
+  echo "pull the docker-image '$DOCKER_IMAGE' ..."
+  docker pull $DOCKER_IMAGE
 fi
