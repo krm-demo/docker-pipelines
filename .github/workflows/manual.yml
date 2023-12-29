@@ -9,11 +9,9 @@ jobs:
     - name: install buildx
       id: buildx
       uses: docker/setup-buildx-action@v3
-    - name: pre-build hello-sh
-      # env:
-      #   GH_BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
-      #   GH_BUILD_NUMBER: ${{ github.run_number }}
-      #   GH_SHA_SHORT: 
+    - name: invoke 'buildx-image.sh'
+      env:
+        DEPLOYMENT_NAME: hello-sh 
       run: ./buildx-image.sh
     - name: some markdown with summary
       env:
