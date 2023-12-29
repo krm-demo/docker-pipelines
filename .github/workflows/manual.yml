@@ -12,16 +12,17 @@ jobs:
         ls -laxo
     - name: install buildx
       id: buildx
-      uses: crazy-max/ghaction-docker-buildx@v1
-      with:
-        version: latest
+      uses: docker/setup-buildx-action@v3
     - name: pre-push hello-sh
       run: |
         docker buildx version
         docker buildx ls
     - name: Generate list using Markdown
+      env:
+        GH_BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
+        GH_BUILD_NUMBER: ${{ github.run_number }}
       run: |
-        echo "Some results ..." >> $GITHUB_STEP_SUMMARY
+        echo "Some results in branch ${GH_BRANCH_NAME}(${GH_BUILD_NUMBER})" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY # this is a blank line
         echo "- Lets add a bullet point" >> $GITHUB_STEP_SUMMARY
         echo "- Lets add a second bullet point" >> $GITHUB_STEP_SUMMARY
