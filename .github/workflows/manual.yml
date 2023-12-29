@@ -12,7 +12,14 @@ jobs:
     - name: invoke 'buildx-image.sh'
       env:
         DEPLOYMENT_NAME: hello-sh 
-      run: ./buildx-image.sh
+        DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ vars.DOCKER_PASSWORD }}
+      run: |
+        echo "DOCKER_USERNAME = '$DOCKER_USERNAME'"
+        echo "DOCKER_PASSWORD = '$DOCKER_PASSWORD'"
+        echo "env.DOCKER_USERNAME = '${{ env.DOCKER_USERNAME }}"
+        echo "secrets.DOCKER_PASSWORD = '${{ secrets.DOCKER_PASSWORD }}"
+        ./buildx-image.sh
     - name: some markdown with summary
       env:
         GH_BRANCH_NAME: ${{ github.head_ref || github.ref_name }} 
