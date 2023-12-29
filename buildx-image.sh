@@ -82,3 +82,11 @@ if [ "$DOCKER_TAG_NAME" == "local" ]; then
   echo "pull the docker-image '$DOCKER_IMAGE' ..."
   docker pull $DOCKER_IMAGE
 fi
+
+if [ -n "$GITHUB_STEP_SUMMARY"]
+  echo "Multi-platform docker-image '$DOCKER_IMAGE' is ready to use:" >> $GITHUB_STEP_SUMMARY
+  echo "
+\`\`\`bash
+    docker run --rm --pull always $DOCKER_IMAGE
+\`\`\`" >> $GITHUB_STEP_SUMMARY
+fi
