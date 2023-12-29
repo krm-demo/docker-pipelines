@@ -15,10 +15,10 @@ jobs:
         DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        ./buildx-image.sh
+        source ./buildx-image.sh
         echo "Multi-platform docker-image '$DOCKER_IMAGE' is ready to use:" >> $GITHUB_STEP_SUMMARY
         echo "```bash" >> $GITHUB_STEP_SUMMARY
-        echo "    docker run --rm --pull always $DOCKER_IMAGE >> $GITHUB_STEP_SUMMARY
+        echo "    docker run --rm --pull always $DOCKER_IMAGE" >> $GITHUB_STEP_SUMMARY
         echo "```" >> $GITHUB_STEP_SUMMARY
   hello-java:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
           javac -version
           which javac
           echo "JAVA_HOME = $JAVA_HOME"
-          ./buildx-image.sh
+          source ./buildx-image.sh
           echo "Multi-platform docker-image '$DOCKER_IMAGE' is ready to use:" >> $GITHUB_STEP_SUMMARY
           echo "```bash" >> $GITHUB_STEP_SUMMARY
           echo "    docker run --rm --pull always $DOCKER_IMAGE" >> $GITHUB_STEP_SUMMARY
