@@ -68,11 +68,12 @@ if [ $? -ne 0 ]; then
   exit 103
 fi
 
-echo "create a new builder, named 'container' ..."
-docker buildx create --name container --driver=docker-container
+#echo "create a new builder, named 'container' ..."
+#docker buildx create --name container --driver=docker-container
+#docker buildx build --builder=container -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform=linux/arm64,linux/amd64 --push .
 
 echo "build and push the multi-platform docker-image '$DOCKER_IMAGE' ..."
-docker buildx build --builder=container -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform=linux/arm64,linux/amd64 --push .
+docker buildx build --provenance=false -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform=linux/arm64,linux/amd64 --push .
 if [ $? -ne 0 ]; then
   echo "cannot build the docker-image '$DOCKER_IMAGE' with docker-file '$DOCKERFILE_NAME'"
   exit 105
