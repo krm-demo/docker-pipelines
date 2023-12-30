@@ -68,6 +68,9 @@ if [ $? -ne 0 ]; then
   exit 103
 fi
 
+echo "create a new builder, named 'container' ..."
+docker buildx create --name container --driver=docker-container
+
 echo "build and push the multi-platform docker-image '$DOCKER_IMAGE' ..."
 docker buildx build --builder=container -f $DOCKERFILE_NAME --tag $DOCKER_IMAGE --platform=linux/arm64,linux/amd64 --push .
 if [ $? -ne 0 ]; then
