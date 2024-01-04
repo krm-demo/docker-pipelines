@@ -35,15 +35,27 @@ pipelines:
           - step:
               name: info about working steps
               script:
-                - echo "... only ons step is working now ..."
+                - echo "... only two steps are evaluating now ..."
 #          - step: *build-step--hello-sh
 #          - step: *build-step--hello-java
 #          - step: *build-step--hello-maven
           - step:
-              deployment: hello-gradle
-              name: build and push 'hello-gradle'
-              image: eclipse-temurin:21-jdk
+              deployment: hello-maven
+              name: evaluate 'hello-maven'
+              image: maven:3.9.6-eclipse-temurin-21
+              caches:
+                - maven
               script:
-                - echo "... starting '$DEPLOYMEMT_NAME' ..."
+                - echo "... evaluating '$DEPLOYMEMT_NAME' ..."
+                - ./mvnw --version
+                - ./mvnw buildplan:list
+          - step:
+              deployment: hello-gradle
+              name: evaluate 'hello-gradle'
+              image: eclipse-temurin:21-jdk
+              caches:
+                - gradle
+              script:
+                - echo "... evaluating '$DEPLOYMEMT_NAME' ..."
                 - ./gradlew --version
                 - ./gradlew tasks --all
