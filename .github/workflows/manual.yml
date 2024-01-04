@@ -54,3 +54,24 @@ jobs:
           DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: ./buildx-image.sh
+  hello-gradle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout the latest changes
+        uses: actions/checkout@v4
+      - name: using proper version of java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: setup gradle
+        uses: gradle/gradle-build-action@v2
+      - name: install buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+      - name: invoke 'buildx-image.sh'
+        env:
+          DEPLOYMENT_NAME: hello-gradle
+          DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: ./buildx-image.sh
