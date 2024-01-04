@@ -46,7 +46,7 @@ pipelines:
               caches:
                 - maven
               script:
-                - echo "... evaluating '$DEPLOYMEMT_NAME' ..."
+                - echo "... evaluating '$DEPLOYMENT_NAME' ..."
                 - ./mvnw --version
                 - ./mvnw buildplan:list
           - step:
@@ -56,6 +56,6 @@ pipelines:
               caches:
                 - gradle
               script:
-                - echo "... evaluating '$DEPLOYMEMT_NAME' ..."
+                - echo "... evaluating '$DEPLOYMENT_NAME' ..."
                 - ./gradlew --version
                 - ./gradlew tasks --all
