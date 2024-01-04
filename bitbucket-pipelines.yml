@@ -51,7 +51,7 @@ pipelines:
                 - ./mvnw buildplan:list
           - step:
               deployment: hello-gradle
-              name: evaluate 'hello-gradle'
+              name: build and push 'hello-gradle'
               image: eclipse-temurin:21-jdk
               caches:
                 - gradle
@@ -59,3 +59,5 @@ pipelines:
                 - echo "... evaluating '$DEPLOYMENT_NAME' ..."
                 - ./gradlew --version
                 - ./gradlew tasks --all
+                - echo "... building and pushing '$DEPLOYMENT_NAME' ..."
+                - ./build-image.sh
