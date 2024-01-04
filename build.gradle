@@ -2,18 +2,40 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2-SNAPSHOT'
     id 'io.spring.dependency-management' version '1.1.4'
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id 'com.netflix.nebula.info' version "12.1.6"
 }
 
-group = 'org.krmdemo'
-version = '0.0.1-SNAPSHOT'
+group = 'org.krmdemo.app'
+version = '1.0'
+description = "'Hello' Command-Line Application"
 
 java {
-    sourceCompatibility = '21'
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+// the construction bellow is just a way to detect the version of spring-boot
+// gradle - is the most elegant and evident tool in the world !!!
+def springBootVersion = project.rootProject
+    .extensions
+    .getByType(VersionCatalogsExtension.class)
+    .named("libs")
+    .findVersion("org-springframework-boot-spring-boot-starter")
+    .get()
+
+springBoot { pl ->
+    buildInfo {
+        properties {
+            additional = [
+                'description': project.getDescription(),
+                'java.source': JavaVersion.VERSION_21,
+                'java.target': JavaVersion.VERSION_21,
+                'tool.name': 'gradle',
+                'tool.version': "${gradle.gradleVersion}",
+                'spring.boot.version': "${springBootVersion}",
+            ]
+        }
     }
 }
 
@@ -38,4 +60,35 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+plugins.withType(nebula.plugin.info.reporting.InfoPropertiesFilePlugin).configureEach { pl ->
+    pl.manifestTask.configure {
+        doLast {
+            var fileInfo = file(project.layout.buildDirectory.file("resources/main/gradle-info.properties"))
+            println("-- copying the resource '${fileInfo}' ...")
+            fileInfo.text = """\
+# --------------------------------------------------------------------
+# gradle-info, generated with 'com.netflix.nebula.info' gradle-plugin:
+# --------------------------------------------------------------------
+${file(propertiesFile.get()).text}
+"""
+            var fileEnvProps = file(project.layout.buildDirectory.file("resources/main/gradle-env.properties"))
+            println("-- writing the resource '${fileEnvProps}' ...")
+            fileEnvProps.text = """\
+# -----------------------------------------------------
+#      environment variables during gradle-build:
+# -----------------------------------------------------
+${System.getenv().sort().collect{ envName, envValue -> "$envName=$envValue" }.join("\n")}
+"""
+            var fileSysProps = file(project.layout.buildDirectory.file("resources/main/gradle-system.properties"))
+            println("-- writing the resource '${fileSysProps}' ...")
+            fileSysProps.text = """\
+# -----------------------------------------------------
+#      java system-properties during gradle-build:
+# -----------------------------------------------------
+${System.getProperties().sort().collect{ propName, propValue -> "$propName=$propValue" }.join("\n")}
+"""
+        }
+    }
 }

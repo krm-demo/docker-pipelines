@@ -62,6 +62,12 @@
 #
 ##############################################################################
 
+# ---------- added manually: ----------------
+export GRADLE_WRAPPER_STARTED_AT=$(date --utc "+%FT%T.%NZ")
+export GRADLE_WRAPPER_SCRIPT_FILE=$(realpath "$0")
+echo "Starting gradle via wrapper from '$GRADLE_WRAPPER_SCRIPT_FILE'"
+# -------------------------------------------
+
 # Attempt to set APP_HOME
 
 # Resolve links: $0 may be a link
