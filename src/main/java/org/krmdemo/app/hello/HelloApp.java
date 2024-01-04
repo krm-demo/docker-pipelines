@@ -5,11 +5,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.*;
 
+import static org.krmdemo.restinfo.util.DumpUtils.dumpBuildResource;
 import static org.krmdemo.restinfo.util.DumpUtils.dumpCmd;
 import static org.krmdemo.restinfo.util.DumpUtils.dumpProps;
+import static org.krmdemo.restinfo.util.DumpUtils.dumpResource;
 import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
 
 /**
@@ -18,6 +21,10 @@ import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
  */
 @SpringBootApplication
 public class HelloApp implements CommandLineRunner {
+
+    private final static String RESOURCE_BUILD_DOCKER_INFO = "/docker-system-info.txt";
+    private final static String RESOURCE_BUILD_GIT_INFO = "/git.properties";
+    private final static String RESOURCE_BUILD_INFO_SPRING_BOOT = "/META-INF/build-info.properties";
 
     @Value("${spring.application.name}")
     private String applicationName;
@@ -43,7 +50,9 @@ public class HelloApp implements CommandLineRunner {
         dumpProps(toSortedMap(System.getProperties()));
         System.out.println("=================================================");
 
-        // TODO: dump the rest and move the logic to a proper classes and packages
+        dumpBuildResource("docker system-info", RESOURCE_BUILD_DOCKER_INFO);
+        dumpBuildResource("git-properties", RESOURCE_BUILD_GIT_INFO);
+        dumpBuildResource("spring-boot build-info", RESOURCE_BUILD_INFO_SPRING_BOOT);
     }
 
     public static void main(String[] args) {

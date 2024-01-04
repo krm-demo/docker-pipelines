@@ -66,7 +66,7 @@ plugins.withType(nebula.plugin.info.reporting.InfoPropertiesFilePlugin).configur
     pl.manifestTask.configure {
         doLast {
             var fileInfo = file(project.layout.buildDirectory.file("resources/main/gradle-info.properties"))
-            println("-- copying the resource '${fileInfo}' ...")
+            println("-- copying the gradle-info to '${fileInfo}' ...")
             fileInfo.text = """\
 # --------------------------------------------------------------------
 # gradle-info, generated with 'com.netflix.nebula.info' gradle-plugin:
@@ -74,7 +74,7 @@ plugins.withType(nebula.plugin.info.reporting.InfoPropertiesFilePlugin).configur
 ${file(propertiesFile.get()).text}
 """
             var fileEnvProps = file(project.layout.buildDirectory.file("resources/main/gradle-env.properties"))
-            println("-- writing the resource '${fileEnvProps}' ...")
+            println("-- writing the env-vars into '${fileEnvProps}' ...")
             fileEnvProps.text = """\
 # -----------------------------------------------------
 #      environment variables during gradle-build:
@@ -82,13 +82,16 @@ ${file(propertiesFile.get()).text}
 ${System.getenv().sort().collect{ envName, envValue -> "$envName=$envValue" }.join("\n")}
 """
             var fileSysProps = file(project.layout.buildDirectory.file("resources/main/gradle-system.properties"))
-            println("-- writing the resource '${fileSysProps}' ...")
+            println("-- writing the sys-props into '${fileSysProps}' ...")
             fileSysProps.text = """\
 # -----------------------------------------------------
 #      java system-properties during gradle-build:
 # -----------------------------------------------------
 ${System.getProperties().sort().collect{ propName, propValue -> "$propName=$propValue" }.join("\n")}
 """
+            var fileDockerInfoTxt = file(project.layout.buildDirectory.file("resources/main/docker-system-info.txt"))
+            println("-- writing the docker-info into '${fileDockerInfoTxt}' as text ...")
+            fileDockerInfoTxt.text = "docker system info".execute().text
         }
     }
 }
