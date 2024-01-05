@@ -6,15 +6,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.PrintStream;
-import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.*;
 
 import static org.krmdemo.restinfo.util.DumpUtils.dumpBuildResource;
 import static org.krmdemo.restinfo.util.DumpUtils.dumpCmd;
 import static org.krmdemo.restinfo.util.DumpUtils.dumpProps;
-import static org.krmdemo.restinfo.util.DumpUtils.dumpResource;
 import static org.krmdemo.restinfo.util.DumpUtils.systemOut;
 import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
 
@@ -25,9 +22,9 @@ import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
 @SpringBootApplication
 public class HelloApp implements CommandLineRunner {
 
-    private final static String RESOURCE_BUILD_DOCKER_INFO = "/docker-system-info.txt";
-    private final static String RESOURCE_BUILD_GIT_INFO = "/git.properties";
-    private final static String RESOURCE_BUILD_INFO_SPRING_BOOT = "/META-INF/build-info.properties";
+    private static final String RESOURCE_BUILD_DOCKER_INFO = "/docker-system-info.txt";
+    private static final String RESOURCE_BUILD_GIT_INFO = "/git.properties";
+    private static final String RESOURCE_BUILD_INFO_SPRING_BOOT = "/META-INF/build-info.properties";
 
     @Value("${spring.application.name}")
     String applicationName;
@@ -35,11 +32,11 @@ public class HelloApp implements CommandLineRunner {
     /**
      * Represents the set of rest-ingo kinds (build, strat-up, etc ...)
      */
-    EnumSet<RestInfoKind> restInfoKinds = RestInfoKind.ALL;
+    Set<RestInfoKind> restInfoKinds = RestInfoKind.ALL;
 
     @Override
     public void run(String... args) {
-        systemOut().printf("Hello from Spring-Boot application '%s' at %s\n", applicationName, ZonedDateTime.now());
+        systemOut().printf("Hello from Spring-Boot application '%s' at %s%n", applicationName, ZonedDateTime.now());
 
         if (restInfoKinds.contains(RestInfoKind.START_UP_INFO)) {
             systemOut().println("=================================================");

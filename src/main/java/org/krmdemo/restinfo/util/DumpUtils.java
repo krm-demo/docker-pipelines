@@ -96,4 +96,11 @@ public class DumpUtils {
     protected static PrintStream systemOut = System.out;
 
     protected static PrintStream systemErr = System.err;
+
+
+    /**
+     * Prohibit creating the instance for utility class (sonar issue - "java:S1118")
+     */
+    protected DumpUtils() {
+    }
 }

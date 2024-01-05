@@ -13,4 +13,10 @@ public class StreamUtils {
         return props.entrySet().stream().collect(toMap(
             e -> "" + e.getKey(), e -> "" + e.getValue(), (x, y) -> y, TreeMap::new));
     }
+
+    /**
+     * Prohibit creating the instance for utility class (sonar issue - "java:S1118")
+     */
+    private StreamUtils() {
+    }
 }

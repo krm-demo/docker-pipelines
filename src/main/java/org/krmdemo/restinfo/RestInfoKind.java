@@ -30,10 +30,10 @@ public enum RestInfoKind {
     /**
      * This set represents all kind of information is requested
      */
-    public final static EnumSet<RestInfoKind> ALL = EnumSet.allOf(RestInfoKind.class);
+    public static final Set<RestInfoKind> ALL = EnumSet.allOf(RestInfoKind.class);
 
     /**
      * This set indicates that none of information is requested
      */
-    public final static EnumSet<RestInfoKind> NONE = EnumSet.noneOf(RestInfoKind.class);
+    public static final Set<RestInfoKind> NONE = EnumSet.noneOf(RestInfoKind.class);
 }
