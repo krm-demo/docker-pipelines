@@ -17,7 +17,7 @@ public class DumpUtils {
      * @param props key-value pairs as {@link Map}
      */
     public static void dumpProps(Map<String, String> props) {
-        props.forEach((propName, propValue) -> systemOut.printf("%s --> '%s'\n", propName, propValue));
+        props.forEach((propName, propValue) -> systemOut.printf("%s --> '%s'%n", propName, propValue));
     }
 
     /**
@@ -34,7 +34,7 @@ public class DumpUtils {
             int exitCode = pr.waitFor();
             systemOut.println(exitCode == 0 ? "" : " exitCode " + exitCode);
         } catch (Exception ex) {
-            systemErr.printf("could not execute the command-line: %s\n", commandLine);
+            systemErr.printf("could not execute the command-line: %s%n", commandLine);
             ex.printStackTrace(systemErr);
             Thread.currentThread().interrupt();
             System.exit(-111);
@@ -49,7 +49,7 @@ public class DumpUtils {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resURL.openStream()))) {
             br.lines().forEach(systemOut::println);
         } catch (Exception ex) {
-            systemErr.printf("could not dump the content of resource: %s\n", resURL);
+            systemErr.printf("could not dump the content of resource: %s%n", resURL);
             ex.printStackTrace(systemErr);
         }
     }
@@ -74,9 +74,9 @@ public class DumpUtils {
         if (resourceURL == null && ignoreIfAbsent) {
             return;
         }
-        System.out.printf("%s when building the docker image '%s':\n", message, resourcePath);
+        systemOut.printf("%s when building the docker image '%s':%n", message, resourcePath);
         if (resourceURL == null) {
-            systemErr.printf("could not load the content of resource '%s'\n", resourcePath);
+            systemErr.printf("could not load the content of resource '%s'%n", resourcePath);
             System.exit(-111);
         }
         systemOut.printf("content of resource (%s):\n", resourceURL);
@@ -93,8 +93,10 @@ public class DumpUtils {
         return systemErr;
     }
 
+    @SuppressWarnings("java:S106")
     protected static PrintStream systemOut = System.out;
 
+    @SuppressWarnings("java:S106")
     protected static PrintStream systemErr = System.err;
 
 

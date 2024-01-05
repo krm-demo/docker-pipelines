@@ -20,6 +20,7 @@ import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
  * the same information as 'hello.sh' script and 'Hello.java'.
  */
 @SpringBootApplication
+@SuppressWarnings("java:S1192")
 public class HelloApp implements CommandLineRunner {
 
     private static final String RESOURCE_BUILD_DOCKER_INFO = "/docker-system-info.txt";

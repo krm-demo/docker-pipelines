@@ -45,8 +45,9 @@ class HelloAppTest extends DumpUtils {
         helloApp.run();
         log.debug("without rest-info:");
         log.debug(sbOut.toString());
-        assertThat(sbOut).startsWith("Hello");
-        assertThat(sbOut).contains("'testNone()'");
+        assertThat(sbOut)
+            .startsWith("Hello")
+            .contains("'testNone()'");
         assertThat(sbErr).isEmpty();
     }
 
@@ -59,8 +60,9 @@ class HelloAppTest extends DumpUtils {
         helloApp.run();
         log.debug("with only {}:", helloApp.restInfoKinds);
         log.debug(sbOut.toString());
-        assertThat(sbOut).contains("'testStartUp()'");
-        assertThat(sbOut).doesNotContain("testNone");
+        assertThat(sbOut)
+            .contains("'testStartUp()'")
+            .doesNotContain("testNone");
         assertThat(sbErr).isEmpty();
     }
 
