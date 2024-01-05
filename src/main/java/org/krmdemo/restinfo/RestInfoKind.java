@@ -2,6 +2,9 @@ package org.krmdemo.restinfo;
 
 import java.util.*;
 
+import static java.util.Collections.*;
+import static java.util.EnumSet.*;
+
 /**
  * This enumeration represents the kind of information about running application origin.
  */
@@ -30,10 +33,10 @@ public enum RestInfoKind {
     /**
      * This set represents all kind of information is requested
      */
-    public static final Set<RestInfoKind> ALL = EnumSet.allOf(RestInfoKind.class);
+    public static final Set<RestInfoKind> ALL = unmodifiableSet(allOf(RestInfoKind.class));
 
     /**
      * This set indicates that none of information is requested
      */
-    public static final Set<RestInfoKind> NONE = EnumSet.noneOf(RestInfoKind.class);
+    public static final Set<RestInfoKind> NONE = unmodifiableSet(noneOf(RestInfoKind.class));
 }

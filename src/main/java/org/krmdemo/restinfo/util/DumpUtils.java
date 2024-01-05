@@ -79,7 +79,7 @@ public class DumpUtils {
             systemErr.printf("could not load the content of resource '%s'%n", resourcePath);
             System.exit(-111);
         }
-        systemOut.printf("content of resource (%s):\n", resourceURL);
+        systemOut.printf("content of resource (%s):%n", resourceURL);
         systemOut.println("-------------------------------------------------");
         dumpResource(resourceURL);
         systemOut.println("=================================================");
