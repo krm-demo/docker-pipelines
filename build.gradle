@@ -2,8 +2,12 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2-SNAPSHOT'
     id 'io.spring.dependency-management' version '1.1.4'
+
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
     id 'com.netflix.nebula.info' version "12.1.6"
+
+    id "jacoco"
+    id "org.sonarqube" version "4.4.1.3373"
 }
 
 group = 'org.krmdemo.app'
@@ -55,6 +59,7 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'commons-io:commons-io:2.15.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -94,4 +99,16 @@ ${System.getProperties().sort().collect{ propName, propValue -> "$propName=$prop
             fileDockerInfoTxt.text = "docker system info".execute().text
         }
     }
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+plugins.withType(JacocoPlugin) {
+    tasks["test"].finalizedBy 'jacocoTestReport'
 }
