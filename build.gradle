@@ -112,3 +112,11 @@ jacocoTestReport {
 plugins.withType(JacocoPlugin) {
     tasks["test"].finalizedBy 'jacocoTestReport'
 }
+
+sonar {
+    properties {
+        property "sonar.projectKey", "krm-demo"
+        property "sonar.organization", "krm-demo"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
