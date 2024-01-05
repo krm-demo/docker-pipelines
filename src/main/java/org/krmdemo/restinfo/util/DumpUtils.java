@@ -1,7 +1,6 @@
 package org.krmdemo.restinfo.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 import java.net.URL;
@@ -18,7 +17,7 @@ public class DumpUtils {
      * @param props key-value pairs as {@link Map}
      */
     public static void dumpProps(Map<String, String> props) {
-        props.forEach((propName, propValue) -> System.out.printf("%s --> '%s'\n", propName, propValue));
+        props.forEach((propName, propValue) -> systemOut.printf("%s --> '%s'\n", propName, propValue));
     }
 
     /**
@@ -30,13 +29,14 @@ public class DumpUtils {
         try {
             Process pr = new ProcessBuilder(cmd).redirectErrorStream(true).start();
             BufferedReader br = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-            System.out.printf("%s = '%s'", commandLine, br.lines().collect(joining(" :\\n: ")));
+            systemOut.printf("%s = '%s'", commandLine, br.lines().collect(joining(" :\\n: ")));
             br.close();
             int exitCode = pr.waitFor();
-            System.out.println(exitCode == 0 ? "" : " exitCode " + exitCode);
+            systemOut.println(exitCode == 0 ? "" : " exitCode " + exitCode);
         } catch (Exception ex) {
-            System.err.printf("could not execute the command-line: %s\n", commandLine);
-            ex.printStackTrace(System.err);
+            systemErr.printf("could not execute the command-line: %s\n", commandLine);
+            ex.printStackTrace(systemErr);
+            Thread.currentThread().interrupt();
             System.exit(-111);
         }
     }
@@ -47,10 +47,10 @@ public class DumpUtils {
      */
     public static void dumpResource(URL resURL) {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resURL.openStream()))) {
-            br.lines().forEach(System.out::println);
+            br.lines().forEach(systemOut::println);
         } catch (Exception ex) {
-            System.err.printf("could not dump the content of resource: %s\n", resURL);
-            ex.printStackTrace(System.err);
+            systemErr.printf("could not dump the content of resource: %s\n", resURL);
+            ex.printStackTrace(systemErr);
         }
     }
 
@@ -76,12 +76,24 @@ public class DumpUtils {
         }
         System.out.printf("%s when building the docker image '%s':\n", message, resourcePath);
         if (resourceURL == null) {
-            System.err.printf("could not load the content of resource '%s'\n", resourcePath);
+            systemErr.printf("could not load the content of resource '%s'\n", resourcePath);
             System.exit(-111);
         }
-        System.out.printf("content of resource (%s):\n", resourceURL);
-        System.out.println("-------------------------------------------------");
+        systemOut.printf("content of resource (%s):\n", resourceURL);
+        systemOut.println("-------------------------------------------------");
         dumpResource(resourceURL);
-        System.out.println("=================================================");
+        systemOut.println("=================================================");
     }
+
+    public static PrintStream systemOut() {
+        return systemOut;
+    }
+
+    public static PrintStream systemErr() {
+        return systemErr;
+    }
+
+    protected static PrintStream systemOut = System.out;
+
+    protected static PrintStream systemErr = System.err;
 }

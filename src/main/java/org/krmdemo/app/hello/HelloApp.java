@@ -1,10 +1,12 @@
 package org.krmdemo.app.hello;
 
+import org.krmdemo.restinfo.RestInfoKind;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.PrintStream;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -13,6 +15,7 @@ import static org.krmdemo.restinfo.util.DumpUtils.dumpBuildResource;
 import static org.krmdemo.restinfo.util.DumpUtils.dumpCmd;
 import static org.krmdemo.restinfo.util.DumpUtils.dumpProps;
 import static org.krmdemo.restinfo.util.DumpUtils.dumpResource;
+import static org.krmdemo.restinfo.util.DumpUtils.systemOut;
 import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
 
 /**
@@ -27,32 +30,45 @@ public class HelloApp implements CommandLineRunner {
     private final static String RESOURCE_BUILD_INFO_SPRING_BOOT = "/META-INF/build-info.properties";
 
     @Value("${spring.application.name}")
-    private String applicationName;
+    String applicationName;
+
+    /**
+     * Represents the set of rest-ingo kinds (build, strat-up, etc ...)
+     */
+    EnumSet<RestInfoKind> restInfoKinds = RestInfoKind.ALL;
 
     @Override
     public void run(String... args) {
-        System.out.printf("Hello from Spring-Boot application '%s' at %s\n", applicationName, ZonedDateTime.now());
-        System.out.println("=================================================");
-        System.out.println("runtime-environment on start-up:");
-        System.out.println("-------------------------------------------------");
-        dumpCmd("uname", "-s"); // --kernel-name
-        dumpCmd("uname", "-r"); // --kernel-release
-        dumpCmd("uname", "-o"); // --operating-system
-        dumpCmd("uname", "-m"); // --machine
-        dumpCmd("uname", "-p"); // --processor
-        dumpCmd("uname", "-n"); // --nodename
-        dumpCmd("uname", "-i"); // --hardware-platform
-        dumpCmd("uname", "-a"); // --all
-        dumpProps(new TreeMap<>(System.getenv()));
-        System.out.println("=================================================");
-        System.out.println("java system-properties on start-up:");
-        System.out.println("-------------------------------------------------");
-        dumpProps(toSortedMap(System.getProperties()));
-        System.out.println("=================================================");
+        systemOut().printf("Hello from Spring-Boot application '%s' at %s\n", applicationName, ZonedDateTime.now());
 
-        dumpBuildResource("docker system-info", RESOURCE_BUILD_DOCKER_INFO);
-        dumpBuildResource("git-properties", RESOURCE_BUILD_GIT_INFO);
-        dumpBuildResource("spring-boot build-info", RESOURCE_BUILD_INFO_SPRING_BOOT);
+        if (restInfoKinds.contains(RestInfoKind.START_UP_INFO)) {
+            systemOut().println("=================================================");
+            systemOut().println("runtime-environment on start-up:");
+            systemOut().println("-------------------------------------------------");
+            dumpCmd("uname", "-s"); // --kernel-name
+            dumpCmd("uname", "-r"); // --kernel-release
+            dumpCmd("uname", "-o"); // --operating-system
+            dumpCmd("uname", "-m"); // --machine
+            dumpCmd("uname", "-p"); // --processor
+            dumpCmd("uname", "-n"); // --nodename
+            dumpCmd("uname", "-i"); // --hardware-platform
+            dumpCmd("uname", "-a"); // --all
+            dumpProps(new TreeMap<>(System.getenv()));
+            systemOut().println("=================================================");
+            systemOut().println("java system-properties on start-up:");
+            systemOut().println("-------------------------------------------------");
+            dumpProps(toSortedMap(System.getProperties()));
+            systemOut().println("=================================================");
+        }
+
+        if (restInfoKinds.contains(RestInfoKind.BUILD_INFO)) {
+            dumpBuildResource("docker system-info", RESOURCE_BUILD_DOCKER_INFO);
+            dumpBuildResource("spring-boot build-info", RESOURCE_BUILD_INFO_SPRING_BOOT);
+        }
+
+        if (restInfoKinds.contains(RestInfoKind.SCM_INFO)) {
+            dumpBuildResource("git-properties", RESOURCE_BUILD_GIT_INFO);
+        }
     }
 
     public static void main(String[] args) {
