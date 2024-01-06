@@ -1,6 +1,8 @@
 package org.krmdemo.app.hello;
 
 import org.krmdemo.restinfo.RestInfoKind;
+import org.krmdemo.restinfo.util.DumpHelper;
+import org.krmdemo.restinfo.util.SystemHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -9,10 +11,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.time.ZonedDateTime;
 import java.util.*;
 
-import static org.krmdemo.restinfo.util.DumpUtils.dumpBuildResource;
-import static org.krmdemo.restinfo.util.DumpUtils.dumpCmd;
-import static org.krmdemo.restinfo.util.DumpUtils.dumpProps;
-import static org.krmdemo.restinfo.util.DumpUtils.systemOut;
 import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
 
 /**
@@ -20,7 +18,7 @@ import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
  * the same information as 'hello.sh' script and 'Hello.java'.
  */
 @SpringBootApplication
-@SuppressWarnings("java:S1192")
+@SuppressWarnings({"java:S1192", "resource"})
 public class HelloApp implements CommandLineRunner {
 
     private static final String RESOURCE_BUILD_DOCKER_INFO = "/docker-system-info.txt";
@@ -28,44 +26,59 @@ public class HelloApp implements CommandLineRunner {
     private static final String RESOURCE_BUILD_INFO_SPRING_BOOT = "/META-INF/build-info.properties";
 
     @Value("${spring.application.name}")
-    String applicationName;
+    protected String applicationName;
 
     /**
      * Represents the set of rest-ingo kinds (build, strat-up, etc ...)
      */
-    Set<RestInfoKind> restInfoKinds = RestInfoKind.ALL;
+    protected Set<RestInfoKind> restInfoKinds = RestInfoKind.ALL;
+
+    /**
+     * An instance of helper-class to work with standard {@link System} utility.
+     */
+    private final SystemHelper sh;
+
+    /**
+     * An instance of helper-class to dump into standard output and logs.
+     */
+    private final DumpHelper dh;
+
+    public HelloApp(SystemHelper systemHelper) {
+        this.sh = systemHelper;
+        this.dh = new DumpHelper(systemHelper);
+    }
 
     @Override
     public void run(String... args) {
-        systemOut().printf("Hello from Spring-Boot application '%s' at %s%n", applicationName, ZonedDateTime.now());
+        sh.out().printf("Hello from Spring-Boot application '%s' at %s%n", applicationName, ZonedDateTime.now());
 
         if (restInfoKinds.contains(RestInfoKind.START_UP_INFO)) {
-            systemOut().println("=================================================");
-            systemOut().println("runtime-environment on start-up:");
-            systemOut().println("-------------------------------------------------");
-            dumpCmd("uname", "-s"); // --kernel-name
-            dumpCmd("uname", "-r"); // --kernel-release
-            dumpCmd("uname", "-o"); // --operating-system
-            dumpCmd("uname", "-m"); // --machine
-            dumpCmd("uname", "-p"); // --processor
-            dumpCmd("uname", "-n"); // --nodename
-            dumpCmd("uname", "-i"); // --hardware-platform
-            dumpCmd("uname", "-a"); // --all
-            dumpProps(new TreeMap<>(System.getenv()));
-            systemOut().println("=================================================");
-            systemOut().println("java system-properties on start-up:");
-            systemOut().println("-------------------------------------------------");
-            dumpProps(toSortedMap(System.getProperties()));
-            systemOut().println("=================================================");
+            sh.out().println("=================================================");
+            sh.out().println("runtime-environment on start-up:");
+            sh.out().println("-------------------------------------------------");
+            dh.dumpCmd("uname", "-s"); // --kernel-name
+            dh.dumpCmd("uname", "-r"); // --kernel-release
+            dh.dumpCmd("uname", "-o"); // --operating-system
+            dh.dumpCmd("uname", "-m"); // --machine
+            dh.dumpCmd("uname", "-p"); // --processor
+            dh.dumpCmd("uname", "-n"); // --nodename
+            dh.dumpCmd("uname", "-i"); // --hardware-platform
+            dh.dumpCmd("uname", "-a"); // --all
+            dh.dumpProps(new TreeMap<>(System.getenv()));
+            sh.out().println("=================================================");
+            sh.out().println("java system-properties on start-up:");
+            sh.out().println("-------------------------------------------------");
+            dh.dumpProps(toSortedMap(System.getProperties()));
+            sh.out().println("=================================================");
         }
 
         if (restInfoKinds.contains(RestInfoKind.BUILD_INFO)) {
-            dumpBuildResource("docker system-info", RESOURCE_BUILD_DOCKER_INFO);
-            dumpBuildResource("spring-boot build-info", RESOURCE_BUILD_INFO_SPRING_BOOT);
+            dh.dumpBuildResource("docker system-info", RESOURCE_BUILD_DOCKER_INFO);
+            dh.dumpBuildResource("spring-boot build-info", RESOURCE_BUILD_INFO_SPRING_BOOT);
         }
 
         if (restInfoKinds.contains(RestInfoKind.SCM_INFO)) {
-            dumpBuildResource("git-properties", RESOURCE_BUILD_GIT_INFO);
+            dh.dumpBuildResource("git-properties", RESOURCE_BUILD_GIT_INFO);
         }
     }
 
