@@ -13,8 +13,8 @@
   <properties>
     <java.version>21</java.version>
     <spring.boot.version>3.2.1</spring.boot.version>
-    <maven.compiler.source>${java.version}</maven.compiler.source>
-    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <project.artifact.coords>${project.groupId}:${project.artifactId}:${project.version}</project.artifact.coords>
     <maven.plugin.validation>VERBOSE</maven.plugin.validation>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!--
@@ -122,6 +122,14 @@
           <compilerArgument>-proc:full</compilerArgument>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <configuration>
+          <propertiesEncoding>${project.build.sourceEncoding}</propertiesEncoding>
+        </configuration>
+      </plugin>
 
       <plugin>
         <groupId>org.springframework.boot</groupId>
@@ -136,8 +144,8 @@
           </excludes>
           <additionalProperties>
             <description>${project.description}</description>
-            <java.source>${maven.compiler.source}</java.source>
-            <java.target>${maven.compiler.target}</java.target>
+            <java.source>${maven.compiler.release}</java.source>
+            <java.target>${maven.compiler.release}</java.target>
             <tool.name>maven</tool.name>
             <tool.version>${maven.version}</tool.version>
             <spring.boot.version>${spring.boot.version}</spring.boot.version>

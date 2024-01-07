@@ -46,7 +46,7 @@ public class Hello {
         } catch (Exception ex) {
             System.err.printf("could not execute the command-line: %s\n", commandLine);
             ex.printStackTrace(System.err);
-            System.exit(-111);
+            System.exit(111);
         }
     }
 
@@ -89,7 +89,7 @@ public class Hello {
         System.out.printf("build-environment when building the docker image '%s':\n", RESOURCE_BUILD_ENV);
         if (buildEnvURL == null) {
             System.err.printf("could not load the content of resource '%s'\n", RESOURCE_BUILD_ENV);
-            System.exit(-222);
+            System.exit(222);
         }
         System.out.printf("content of resource (%s):\n", buildEnvURL);
         System.out.println("-------------------------------------------------");
@@ -100,7 +100,7 @@ public class Hello {
         System.out.printf("docker system-info when building the docker image '%s':\n", RESOURCE_BUILD_DOCKER_INFO);
         if (dockerInfoURL == null) {
             System.err.printf("could not load the content of resource '%s'\n", RESOURCE_BUILD_DOCKER_INFO);
-            System.exit(-333);
+            System.exit(333);
         }
         System.out.printf("content of resource (%s):\n", dockerInfoURL);
         System.out.println("-------------------------------------------------");

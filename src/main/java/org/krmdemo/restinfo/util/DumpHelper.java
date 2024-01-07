@@ -18,7 +18,7 @@ public class DumpHelper {
     /**
      * An instance of helper to work with standard {@link System} utility.
      */
-    protected final @Nonnull SystemHelper sh;
+    protected final SystemHelper sh;
 
     public DumpHelper(SystemHelper systemHelper) {
         this.sh = systemHelper;
@@ -51,7 +51,7 @@ public class DumpHelper {
             sh.err().printf("could not execute the command-line: %s%n", commandLine);
             ex.printStackTrace(sh.err());
             Thread.currentThread().interrupt();
-            sh.exit(-111);
+            sh.exit(111);
         }
     }
 
@@ -94,7 +94,7 @@ public class DumpHelper {
         sh.out().printf("%s when building the docker image '%s':%n", message, resourcePath);
         if (resourceURL == null) {
             sh.err().printf("could not load the content of resource '%s'%n", resourcePath);
-            sh.exit(-111);
+            sh.exit(222);
         }
         sh.out().printf("content of resource (%s):%n", resourceURL);
         sh.out().println("-------------------------------------------------");

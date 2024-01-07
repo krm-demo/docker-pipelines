@@ -1,3 +1,5 @@
+import java.time.ZonedDateTime
+
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2-SNAPSHOT'
@@ -13,7 +15,34 @@ plugins {
 
 group = 'org.krmdemo.app'
 version = '1.0'
+// name = 'hello-app' // <-- this is assigned in 'settings.xml' from 'rootProject.name'
 description = "'Hello' Command-Line Application"
+
+Map<String,String> substitutions = [
+    "project.groupId": "${project.group}",
+    "project.artifactId": "${project.name}",
+    "project.version": "${project.version}",
+    "project.artifact.coords": "${project.group}:${project.name}:${project.version}",
+    "project.description": "${project.description}",
+    "application.build.timestamp": "${Instant.now()}",
+    "maven.build.timestamp.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+]
+
+processResources {
+    doLast {
+        var resName = 'resources/main/application.properties'
+        var resFile = file(project.layout.buildDirectory.file(resName))
+        println("-- substituting the file '${resFile}' ...")
+//        println("------ resource '$resName' before: ------")
+//        println("${resFile.text}")
+        substitutions.each { substName, substValue ->
+            ant.replace(file: "$resFile", token: "@${substName}@", value: substValue)
+        }
+//        println("------ resource '$resName' after:  ------")
+//        println("${resFile.text}")
+//        println('-' * (resName.length() + 33))
+    }
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -112,6 +141,10 @@ jacocoTestReport {
 
 plugins.withType(JacocoPlugin) {
     tasks["test"].finalizedBy 'jacocoTestReport'
+}
+
+jacocoLogTestCoverage {
+    maxDecimalDigits = 2
 }
 
 sonar {
