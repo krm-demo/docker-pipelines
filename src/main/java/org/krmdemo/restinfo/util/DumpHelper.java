@@ -1,11 +1,10 @@
 package org.krmdemo.restinfo.util;
 
-import jakarta.annotation.Nonnull;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.*;
 
-import java.net.URL;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 
