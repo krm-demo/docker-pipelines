@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -18,7 +19,8 @@ import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
  * the same information as 'hello.sh' script and 'Hello.java'.
  */
 @SpringBootApplication
-@SuppressWarnings({"java:S1192", "resource"})
+@SuppressWarnings("resource")
+@ComponentScan(basePackages = {"org.krmdemo.restinfo","rg.krmdemo.app.hello"})
 public class HelloApp implements CommandLineRunner {
 
     private static final String RESOURCE_BUILD_DOCKER_INFO = "/docker-system-info.txt";
@@ -36,12 +38,12 @@ public class HelloApp implements CommandLineRunner {
     /**
      * An instance of helper-class to work with standard {@link System} utility.
      */
-    private final SystemHelper sh;
+    protected final SystemHelper sh;
 
     /**
      * An instance of helper-class to dump into standard output and logs.
      */
-    private final DumpHelper dh;
+    protected final DumpHelper dh;
 
     public HelloApp(SystemHelper systemHelper) {
         this.sh = systemHelper;
@@ -49,6 +51,7 @@ public class HelloApp implements CommandLineRunner {
     }
 
     @Override
+    @SuppressWarnings("java:S1192")
     public void run(String... args) {
         sh.out().printf("Hello from Spring-Boot application '%s' at %s%n", applicationName, ZonedDateTime.now());
 

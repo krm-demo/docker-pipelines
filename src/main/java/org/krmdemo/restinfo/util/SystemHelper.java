@@ -21,10 +21,12 @@ public interface SystemHelper {
         }
     }
 
+    @SuppressWarnings("java:S106")
     default PrintStream out() {
         return System.out;
     }
 
+    @SuppressWarnings("java:S106")
     default PrintStream err() {
         return System.err;
     }

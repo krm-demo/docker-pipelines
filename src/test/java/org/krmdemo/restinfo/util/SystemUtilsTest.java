@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @SuppressWarnings("resource")
-public class SystemUtilsTest {
+class SystemUtilsTest {
 
     private final static Level LVL = Level.INFO;
 
@@ -26,7 +26,7 @@ public class SystemUtilsTest {
     }
 
     @Test
-    public void testOne() {
+    void testOne() {
         log.atLevel(LVL).log("TST({}).testOne()  - systemUtilsExt({})",
             instanceNum, systemUtilsExt.instanceNum);
         SystemUtils.out().print("[1]");
