@@ -23,7 +23,11 @@ import static org.krmdemo.restinfo.util.StreamUtils.toSortedMap;
 @ComponentScan(basePackages = {"org.krmdemo.restinfo","rg.krmdemo.app.hello"})
 public class HelloApp implements CommandLineRunner {
 
+    private static final String RESOURCE_BUILD_GRADLE_ENV = "/gradle-env.properties";
+    private static final String RESOURCE_BUILD_GRADLE_SYSTEM = "/gradle-system.properties";
     private static final String RESOURCE_BUILD_DOCKER_INFO = "/docker-system-info.txt";
+    private static final String RESOURCE_BUILD_GRADLE_INFO = "/gradle-info.properties";
+    private static final String RESOURCE_BUILD_MAVEN_SYSTEM_INFO = "/maven-system-info.txt";
     private static final String RESOURCE_BUILD_GIT_INFO = "/git.properties";
     private static final String RESOURCE_BUILD_INFO_SPRING_BOOT = "/META-INF/build-info.properties";
 
@@ -76,11 +80,15 @@ public class HelloApp implements CommandLineRunner {
         }
 
         if (restInfoKinds.contains(RestInfoKind.BUILD_INFO)) {
-            dh.dumpBuildResource("docker system-info", RESOURCE_BUILD_DOCKER_INFO);
-            dh.dumpBuildResource("spring-boot build-info", RESOURCE_BUILD_INFO_SPRING_BOOT);
+            dh.dumpBuildResource("docker system-info when building the docker image", RESOURCE_BUILD_DOCKER_INFO);
+            dh.dumpBuildResource("build-environment when building the docker image", RESOURCE_BUILD_GRADLE_ENV, true);
+            dh.dumpBuildResource("java system-properties when building the docker image", RESOURCE_BUILD_GRADLE_SYSTEM, true);
+            dh.dumpBuildResource("maven-system-info when building the docker image", RESOURCE_BUILD_MAVEN_SYSTEM_INFO, true);
+            dh.dumpBuildResource("spring-boot build-info when building the docker image", RESOURCE_BUILD_INFO_SPRING_BOOT);
         }
 
         if (restInfoKinds.contains(RestInfoKind.SCM_INFO)) {
+            dh.dumpBuildResource("gradle-info when building the docker image", RESOURCE_BUILD_GRADLE_INFO, true);
             dh.dumpBuildResource("git-properties", RESOURCE_BUILD_GIT_INFO);
         }
     }
