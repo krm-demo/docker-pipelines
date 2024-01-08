@@ -210,21 +210,21 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.1</version>
-        <configuration>
-          <executable>docker</executable>
-          <arguments>
-            <argument>system</argument>
-            <argument>info</argument>
-          </arguments>
-          <outputFile>${project.build.outputDirectory}/docker-system-info.txt</outputFile>
-        </configuration>
         <executions>
           <execution>
             <id>retrieve-docker-info</id>
+            <phase>initialize</phase>
             <goals>
               <goal>exec</goal>
             </goals>
-            <phase>initialize</phase>
+            <configuration>
+              <executable>docker</executable>
+              <arguments>
+                <argument>system</argument>
+                <argument>info</argument>
+              </arguments>
+              <outputFile>${project.build.outputDirectory}/docker-system-info.txt</outputFile>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -233,18 +233,18 @@
         <groupId>io.github.git-commit-id</groupId>
         <artifactId>git-commit-id-maven-plugin</artifactId>
         <version>7.0.0</version>
-        <configuration>
-          <generateGitPropertiesFile>true</generateGitPropertiesFile>
-          <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
-          <commitIdGenerationMode>full</commitIdGenerationMode>
-        </configuration>
         <executions>
           <execution>
             <id>retrieve-git-info</id>
+            <phase>initialize</phase>
             <goals>
               <goal>revision</goal>
             </goals>
-            <phase>initialize</phase>
+            <configuration>
+              <generateGitPropertiesFile>true</generateGitPropertiesFile>
+              <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+              <commitIdGenerationMode>full</commitIdGenerationMode>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -267,6 +267,49 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.gmavenplus</groupId>
+        <artifactId>gmavenplus-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <id>jacoco-report-log</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <scripts>
+                <script><![CDATA[
+                  log.debug("inline-script of '${mojoExecution.executionId}' before")
+                ]]></script>
+                <script>${basedir}/src/scripts/maven-${mojoExecution.executionId}-helper.groovy</script>
+                <script><![CDATA[
+                  log.debug("inline-script of '${mojoExecution.executionId}' after")
+                ]]></script>
+              </scripts>
+            </configuration>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>4.0.17</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-ant</artifactId>
+            <version>4.0.17</version>
+          </dependency>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-groovysh</artifactId>
+            <version>4.0.17</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>
